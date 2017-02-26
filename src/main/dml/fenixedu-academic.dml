@@ -828,6 +828,10 @@ valueType org.fenixedu.academic.domain.accounting.EventTypes as EventTypes {
     	class EvaluationManagementLog extends ExecutionCourseLog {
     	}
 
+    class ExecutionCourseGradeSubmissionBlock {
+        String reason;
+    }
+
     class DegreeLog extends DomainOperationLog { }
     
     	class CoordinationTeamLog extends DegreeLog { }
@@ -4941,6 +4945,15 @@ relation ExecutionCourseExecutionCourseLog {
 	ExecutionCourseLog playsRole executionCourseLogs {
 		multiplicity*;
 	}
+}
+
+relation ExecutionCourseGradeSubmissionBlockers {
+    ExecutionCourse playsRole executionCourse{
+        multiplicity 0..1;
+    }
+    ExecutionCourseGradeSubmissionBlock playsRole gradeSubmissionBlockers {
+        multiplicity*;
+    }
 }
 
 relation ExecutionYearDegreeLog {

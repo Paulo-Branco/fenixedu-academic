@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import org.fenixedu.academic.domain.EnrolmentEvaluation;
 import org.fenixedu.academic.domain.EvaluationConfiguration;
 import org.fenixedu.academic.domain.EvaluationSeason;
 import org.fenixedu.academic.domain.ExecutionCourse;
+import org.fenixedu.academic.domain.ExecutionCourseGradeSubmissionBlock;
 import org.fenixedu.academic.domain.ExecutionDegree;
 import org.fenixedu.academic.domain.ExecutionSemester;
 import org.fenixedu.academic.domain.FinalMark;
@@ -116,6 +118,8 @@ public class MarkSheetTeacherManagementDispatchAction extends ManageExecutionCou
                 checkIfCanSubmitMarksToAnyCurricularCourse(submissionBean.getAllCurricularCourses(), submissionBean
                         .getExecutionCourse().getExecutionPeriod(), request, actionMessages);
         calculateMarksToSubmit(request, submissionBean);
+        checkIfCanSubmitMarks(submissionBean, request, actionMessages);
+
         request.setAttribute("executionCourse", submissionBean.getExecutionCourse());
         if (submissionBean.getMarksToSubmit().isEmpty()) {
             addMessage(
@@ -206,6 +210,11 @@ public class MarkSheetTeacherManagementDispatchAction extends ManageExecutionCou
             }
         }
         return enrolmentsNotInAnyMarkSheet;
+    }
+
+    private void checkIfCanSubmitMarks(MarkSheetTeacherGradeSubmissionBean submissionBean, HttpServletRequest request, ActionMessages actionMessages) {
+        Set<ExecutionCourseGradeSubmissionBlock> submissionBlockers = submissionBean.getExecutionCourse().getGradeSubmissionBlockersSet();
+        submissionBlockers.forEach(b -> addMessage(request, actionMessages, b.getReason()));
     }
 
     private boolean checkIfCanSubmitMarksToAnyCurricularCourse(Collection<CurricularCourse> curricularCourses,
